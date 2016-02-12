@@ -1,0 +1,42 @@
+div .wc_wrapper{
+	margin: 10px;
+}
+
+div #wc_products_api_status{
+	/*margin: 10px 0px;*/
+	/*display: inline-block;*/
+	/*padding: 10px;*/
+}
+
+div .wc_status_retrieving{
+	border: 2px solid #3C76C1;
+}
+
+div .wc_status_error{
+	border: 2px solid #dc3232;
+}
+
+div .wc_status_success{
+	border: 2px solid green;
+}
+
+
+.notice-primary, div.primary {
+    border-left-color: #3C76C1;
+}
+
+
+
+.wc_products_search {
+	display: inline-block;
+	-webkit-font-smoothing: antialiased;
+	font: normal 28px/1 'dashicons';
+	vertical-align: center;
+	margin-right: 5px;
+	margin-right: 0.5rem;
+}
+
+.wc_products_search:before{
+	content: "\f179";
+}
+
