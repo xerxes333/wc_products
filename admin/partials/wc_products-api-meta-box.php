@@ -21,7 +21,7 @@
         <tr>
             <td>Product URL</td>
             <td>
-                <input type="text" size="80" id="wc_product_pageUrl_input" name="wc_product_pageUrl_input" value="<?php echo $pageUrl; ?>" />
+                <input type="text" size="80" id="wc_products_pageUrl_input" name="wc_products_pageUrl_input" value="<?php echo $pageUrl; ?>" />
                 
                 <?php if(!empty($pageUrl)): ?>
                     <a href="<?php echo $pageUrl; ?>" target="_new" class="button button-primary button-large">
@@ -36,11 +36,11 @@
         </tr>
         <tr>
             <td>Offer Price</td>
-            <td><input type="text" id="wc_product_offerPrice_input" name="wc_product_offerPrice_input" value="<?php echo $offerPrice; ?>"/></td>
+            <td><input type="text" id="wc_products_offerPrice_input" name="wc_products_offerPrice_input" value="<?php echo $offerPrice; ?>"/></td>
         </tr>
         <tr>
             <td>Regular Price</td>
-            <td><input type="text" id="wc_product_regularPrice_input" name="wc_product_regularPrice_input"  value="<?php echo $regularPrice; ?>" /></td>
+            <td><input type="text" id="wc_products_regularPrice_input" name="wc_products_regularPrice_input"  value="<?php echo $regularPrice; ?>" /></td>
         </tr>
     </table>
     

@@ -12,7 +12,7 @@
 			wc_diffbotButtonDisable(true);
 			
 			// get the input we need to consume the Diffbot API
-			var productUrl 	= $('#wc_product_pageUrl_input').val();
+			var productUrl 	= $('#wc_products_pageUrl_input').val();
 			var token 		= encodeURIComponent($('#wc_products_token').val());
 			
 			var request = $.ajax({
@@ -71,11 +71,11 @@
 		
 		// These may not be returned in response object so we need to do some basic checking
 		tinymce.activeEditor.setContent( (!obj.hasOwnProperty('text')) ? "" : obj.text );
-		$("#wc_product_regularPrice_input").val( (!obj.hasOwnProperty('regularPrice')) ? "" : obj.regularPrice );
+		$("#wc_products_regularPrice_input").val( (!obj.hasOwnProperty('regularPrice')) ? "" : obj.regularPrice );
 		
 		// These will always be returned
-		$("#wc_product_pageUrl_input").val(obj.pageUrl);
-		$("#wc_product_offerPrice_input").val(obj.offerPrice);
+		$("#wc_products_pageUrl_input").val(obj.pageUrl);
+		$("#wc_products_offerPrice_input").val(obj.offerPrice);
 		
 	}
 	
