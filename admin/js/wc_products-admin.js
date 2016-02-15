@@ -93,7 +93,7 @@
 				style = 'primary';
 				break;
 			case 'success':
-				text = 'Diffbot was successful! <br>Please ensure the product information is correct, then be sure to save the product. ';
+				text = 'Diffbot was successful! <br>Please make certain the product information is correct, then be sure to save the product. ';
 				style = 'updated';
 				break;
 			case 'fail':

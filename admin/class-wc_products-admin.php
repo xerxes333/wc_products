@@ -30,7 +30,7 @@ class Wc_products_Admin {
 	 * @var      string    $plugin_name    The ID of this plugin.
 	 */
 	private $plugin_name;
-
+    
 	/**
 	 * The version of this plugin.
 	 *
@@ -39,16 +39,15 @@ class Wc_products_Admin {
 	 * @var      string    $version    The current version of this plugin.
 	 */
 	private $version;
-    
+
     /**
-     * Plugin specific preface for options
-     *
+     * Custom Post type name
      * @since    1.0.0
      * @access   private
-     * @var      string    $option_name    
+     * @var      string    $post_type_name    The name of the custom post type
      */
-    private $option_name = 'wc_product';
-
+    private $post_type_name = "wc_product";
+    
 	/**
 	 * Initialize the class and set its properties.
 	 *
@@ -109,8 +108,8 @@ class Wc_products_Admin {
 
 	}
     
-    public function create_product_post_type(){
-        register_post_type( $this->option_name,
+    public function wc_products_create_product_post_type(){
+        register_post_type( $this->post_type_name,
             array(
                 'labels' => array(
                     'name'          => __( 'Products' ),
@@ -138,12 +137,12 @@ class Wc_products_Admin {
         );
     }
 
-    public function my_admin(){
+    public function wc_products_my_admin(){
         add_meta_box(
             $this->plugin_name.'_meta_box',
             'Diffbot Search',
             array($this, $this->plugin_name.'_api_meta_box'),
-            $this->option_name, 
+            $this->plugin_name, 
             'normal', 
             'high'
         );
@@ -151,9 +150,9 @@ class Wc_products_Admin {
     
     public function wc_products_api_meta_box($product){
         $token          = get_option( $this->plugin_name . '_token' );
-        $offerPrice     = get_post_meta($product->ID, $this->option_name.'_offerPrice', true);
-        $regularPrice   = get_post_meta($product->ID, $this->option_name.'_regularPrice', true);
-        $pageUrl        = get_post_meta($product->ID, $this->option_name.'_pageUrl', true);
+        $offerPrice     = get_post_meta($product->ID, $this->plugin_name.'_offerPrice', true);
+        $regularPrice   = get_post_meta($product->ID, $this->plugin_name.'_regularPrice', true);
+        $pageUrl        = get_post_meta($product->ID, $this->plugin_name.'_pageUrl', true);
         include_once 'partials/wc_products-api-meta-box.php';
     }
 
@@ -162,16 +161,16 @@ class Wc_products_Admin {
         if ( $product->post_type == 'wc_product' ) {
             
             // Store data in post meta table if present in post data
-            if ( isset( $_POST[$this->option_name.'_offerPrice_input'] ) && $_POST[$this->option_name.'_offerPrice_input'] != '' ) {
-                update_post_meta( $product_id, $this->option_name.'_offerPrice', $_POST[$this->option_name.'_offerPrice_input'] );
+            if ( isset( $_POST[$this->plugin_name.'_offerPrice_input'] ) && $_POST[$this->plugin_name.'_offerPrice_input'] != '' ) {
+                update_post_meta( $product_id, $this->plugin_name.'_offerPrice', $_POST[$this->plugin_name.'_offerPrice_input'] );
             }
             
-            if ( isset( $_POST[$this->option_name.'_regularPrice_input'] ) && $_POST[$this->option_name.'_regularPrice_input'] != '' ) {
-                update_post_meta( $product_id, $this->option_name.'_regularPrice', $_POST[$this->option_name.'_regularPrice_input'] );
+            if ( isset( $_POST[$this->plugin_name.'_regularPrice_input'] ) && $_POST[$this->plugin_name.'_regularPrice_input'] != '' ) {
+                update_post_meta( $product_id, $this->plugin_name.'_regularPrice', $_POST[$this->plugin_name.'_regularPrice_input'] );
             }
             
-            if ( isset( $_POST[$this->option_name.'_pageUrl_input'] ) && $_POST[$this->option_name.'_pageUrl_input'] != '' ) {
-                update_post_meta( $product_id, $this->option_name.'_pageUrl', esc_url($_POST[$this->option_name.'_pageUrl_input']) );
+            if ( isset( $_POST[$this->plugin_name.'_pageUrl_input'] ) && $_POST[$this->plugin_name.'_pageUrl_input'] != '' ) {
+                update_post_meta( $product_id, $this->plugin_name.'_pageUrl', esc_url($_POST[$this->plugin_name.'_pageUrl_input']) );
             }
 
         }
@@ -184,7 +183,7 @@ class Wc_products_Admin {
             __( 'Product Settings', $this->plugin_name ),
             'manage_options',
             $this->plugin_name,
-            array( $this, $this->option_name.'_display_options_page' )
+            array( $this, $this->plugin_name.'_display_options_page' )
         );
     
     }
@@ -196,22 +195,22 @@ class Wc_products_Admin {
     
     public function wc_products_register_setting() {
         add_settings_section(
-            $this->option_name . '_general',
+            $this->plugin_name . '_general',
             '',
-            array( $this, $this->option_name . '_general_cb' ),
+            array( $this, $this->plugin_name . '_general_cb' ),
             $this->plugin_name
         );
         
         add_settings_field(
-            $this->option_name . '_token',
+            $this->plugin_name . '_token',
             __( 'Diffbot API Token', $this->plugin_name ),
-            array( $this, $this->option_name . '_token_cb' ),
+            array( $this, $this->plugin_name . '_token_cb' ),
             $this->plugin_name,
-            $this->option_name . '_general',
-            array( 'label_for' => $this->option_name . '_token' )
+            $this->plugin_name . '_general',
+            array( 'label_for' => $this->plugin_name . '_token' )
         );
         
-        register_setting( $this->plugin_name, $this->option_name . '_token' );
+        register_setting( $this->plugin_name, $this->plugin_name . '_token' );
     }
     
     public function wc_products_general_cb() {
@@ -219,8 +218,8 @@ class Wc_products_Admin {
     }
 
     public function wc_products_token_cb() {
-        $token = get_option( $this->option_name . '_token' );
-        echo '<input type="text" name="' . $this->option_name . '_token' . '" id="' . $this->option_name . '_token' . '" value="' . $token . '" size="30"> ';
+        $token = get_option( $this->plugin_name . '_token' );
+        echo '<input type="text" name="' . $this->plugin_name . '_token' . '" id="' . $this->plugin_name . '_token' . '" value="' . $token . '" size="30"> ';
     }
         
         

@@ -153,8 +153,8 @@ class Wc_products {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
-		$this->loader->add_action( 'init', $plugin_admin, 'create_product_post_type' );
-		$this->loader->add_action( 'admin_init', $plugin_admin, 'my_admin' );
+		$this->loader->add_action( 'init', $plugin_admin, 'wc_products_create_product_post_type' );
+		$this->loader->add_action( 'admin_init', $plugin_admin, 'wc_products_my_admin' );
         $this->loader->add_action( 'admin_menu', $plugin_admin, 'wc_products_add_options_page');
         $this->loader->add_action( 'admin_init', $plugin_admin, 'wc_products_register_setting' );
 		$this->loader->add_action( 'save_post', $plugin_admin, 'wc_products_add_product_fields', 10, 2 );
