@@ -7,7 +7,8 @@ Stable tag: 4.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-This plugin connects to the Diffbot API and retrieves a product from a user supplied URL
+This plugin connects to the Diffbot API and retrieves a product from a user supplied URL.  
+It uses the WordPress Plugin Boilerplate as a template (http://wppb.io/).
 
 == Installation ==
 
