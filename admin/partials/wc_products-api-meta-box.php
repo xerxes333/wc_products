@@ -23,9 +23,11 @@
             <td>
                 <input type="text" size="80" id="wc_product_pageUrl_input" name="wc_product_pageUrl_input" value="<?php echo $pageUrl; ?>" />
                 
-                <a href="<?php echo $pageUrl; ?>" target="_new" class="button button-primary button-large">
-                    <span class="dashicons wc_products_search"></span>
-                </a>
+                <?php if(!empty($pageUrl)): ?>
+                    <a href="<?php echo $pageUrl; ?>" target="_new" class="button button-primary button-large">
+                        <span class="dashicons wc_products_search"></span>
+                    </a>
+                <?php endif; ?>
                 
                 <input type="button" id="wc_products_diffbot" name="wc_products_diffbot" value="Diffbot!" class="button button-primary button-large" />
                 <span class="spinner"></span>
