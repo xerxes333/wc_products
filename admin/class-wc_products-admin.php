@@ -139,10 +139,10 @@ class Wc_products_Admin {
 
     public function wc_products_my_admin(){
         add_meta_box(
-            $this->plugin_name.'_meta_box',
+            $this->plugin_name.'_api_meta_box',
             'Diffbot Search',
             array($this, $this->plugin_name.'_api_meta_box'),
-            $this->plugin_name, 
+            $this->post_type_name, 
             'normal', 
             'high'
         );
