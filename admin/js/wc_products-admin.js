@@ -12,8 +12,8 @@
 			wc_diffbotButtonDisable(true);
 			
 			// get the input we need to consume the Diffbot API
-			var productUrl 	= $('#wc_products_pageUrl_input').val();
-			var token 		= encodeURIComponent($('#wc_products_token').val());
+			var productUrl 	= $('#wc_products_pageUrl_input').val(),
+				token 		= encodeURIComponent($('#wc_products_token').val());
 			
 			var request = $.ajax({
 				url: "http://api.diffbot.com/v3/product",
@@ -27,7 +27,6 @@
 			})
 			.done(function(data){
 				if(data.hasOwnProperty('objects') && data.objects[0].resolvedPageUrl != 'http://www.diffbot.com/'){
-					
 					// making an assumption here and only grabing the first product object returned
 					wc_displayProductInfo(data.objects[0]);
 				} else {
@@ -46,7 +45,7 @@
 	});
 	
 	/**
-	 *  Handles the Diffbot button toggle so users can't keep clicking it ad nauseum  
+	 * Handles the Diffbot button toggle so users can't keep clicking it ad nauseam  
 	 */
 	function wc_diffbotButtonDisable(val){
 		if(val){
@@ -86,7 +85,8 @@
 		
 		var text = '';
 		var style = '';
-		
+		console.log(status);
+		console.log(error);
 		switch(status){
 			case 'retrieving':
 				text = 'Please wait while we retrieve the product information';
@@ -100,8 +100,11 @@
 				text = 'Unable to connect to Diffbot.';
 				style = 'error';
 				break;
+			case 400:
+			case 401:
 			case 404:
 			case 405:
+			case 429:
 			case 457:
 			case 500:
 				text = error;

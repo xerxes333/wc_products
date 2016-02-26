@@ -108,6 +108,11 @@ class Wc_products_Admin {
 
 	}
     
+    /**
+     * Register the custom post type
+     *
+     * @since    1.0.0
+     */
     public function wc_products_create_product_post_type(){
         register_post_type( $this->post_type_name,
             array(
@@ -137,6 +142,11 @@ class Wc_products_Admin {
         );
     }
 
+    /**
+     * Register the DiffBot meta box for products.
+     *
+     * @since    1.0.0
+     */
     public function wc_products_my_admin(){
         add_meta_box(
             $this->plugin_name.'_api_meta_box',
@@ -148,34 +158,50 @@ class Wc_products_Admin {
         );
     }
     
+    /**
+     * Render the DiffBot meta box for a product.
+     *
+     * @since    1.0.0
+     */
     public function wc_products_api_meta_box($product){
         $token          = get_option( $this->plugin_name . '_token' );
         $offerPrice     = get_post_meta($product->ID, $this->plugin_name.'_offerPrice', true);
         $regularPrice   = get_post_meta($product->ID, $this->plugin_name.'_regularPrice', true);
         $pageUrl        = get_post_meta($product->ID, $this->plugin_name.'_pageUrl', true);
+        $optionsLink    = admin_url( 'options-general.php?page=' .$this->plugin_name );
         include_once 'partials/wc_products-api-meta-box.php';
     }
 
+    /**
+     * Save product post meta data.
+     * 
+     * Saves the product data offerPrice, regularPrice, and PageUrl retrieved from DiffBot
+     * if the values exist and are not empty. The product title and description are saved
+     * as the post_title and post_content.
+     *
+     * @since    1.0.0
+     */
     public function wc_products_add_product_fields( $product_id, $product ) {
         
-        if ( $product->post_type == 'wc_product' ) {
-            
-            // Store data in post meta table if present in post data
-            if ( isset( $_POST[$this->plugin_name.'_offerPrice_input'] ) && $_POST[$this->plugin_name.'_offerPrice_input'] != '' ) {
-                update_post_meta( $product_id, $this->plugin_name.'_offerPrice', $_POST[$this->plugin_name.'_offerPrice_input'] );
-            }
-            
-            if ( isset( $_POST[$this->plugin_name.'_regularPrice_input'] ) && $_POST[$this->plugin_name.'_regularPrice_input'] != '' ) {
-                update_post_meta( $product_id, $this->plugin_name.'_regularPrice', $_POST[$this->plugin_name.'_regularPrice_input'] );
-            }
-            
-            if ( isset( $_POST[$this->plugin_name.'_pageUrl_input'] ) && $_POST[$this->plugin_name.'_pageUrl_input'] != '' ) {
-                update_post_meta( $product_id, $this->plugin_name.'_pageUrl', esc_url($_POST[$this->plugin_name.'_pageUrl_input']) );
-            }
-
+        if ( isset( $_POST[$this->plugin_name.'_offerPrice_input'] ) ) {
+            $this->wc_products_update_meta_data( $product_id, $this->plugin_name.'_offerPrice', $_POST[$this->plugin_name.'_offerPrice_input'] );
         }
+        
+        if ( isset( $_POST[$this->plugin_name.'_regularPrice_input'] ) ) {
+            $this->wc_products_update_meta_data( $product_id, $this->plugin_name.'_regularPrice', $_POST[$this->plugin_name.'_regularPrice_input'] );
+        }
+        
+        if ( isset( $_POST[$this->plugin_name.'_pageUrl_input'] ) ) {
+            $this->wc_products_update_meta_data( $product_id, $this->plugin_name.'_pageUrl', $_POST[$this->plugin_name.'_pageUrl_input'] );
+        }
+        
     }
-
+    
+    /**
+     * Adding Product Settings to the admin menu.
+     *
+     * @since    1.0.0
+     */
     public function wc_products_add_options_page() {
     
         $this->plugin_screen_hook_suffix = add_options_page(
@@ -188,11 +214,21 @@ class Wc_products_Admin {
     
     }
     
+    /**
+     * Render Product Settings page.
+     *
+     * @since    1.0.0
+     */
     public function wc_products_display_options_page() {
         include_once 'partials/wc_products-admin-display.php';
     }
     
     
+    /**
+     * Register product settings for DiffBot API token.
+     *
+     * @since    1.0.0
+     */
     public function wc_products_register_setting() {
         add_settings_section(
             $this->plugin_name . '_general',
@@ -210,17 +246,86 @@ class Wc_products_Admin {
             array( 'label_for' => $this->plugin_name . '_token' )
         );
         
-        register_setting( $this->plugin_name, $this->plugin_name . '_token' );
+        register_setting( 
+            $this->plugin_name, 
+            $this->plugin_name . '_token', 
+            array( $this, $this->plugin_name . '_validate_input_token_cb' )
+            
+        );
     }
     
+    /**
+     * Render settings section
+     *
+     * @since    1.0.0
+     */
     public function wc_products_general_cb() {
         echo '<p>' . __( 'Please supply the Diffbot API token.', $this->plugin_name ) . '</p>';
     }
 
+    /**
+     * Render settings token input
+     *
+     * @since    1.0.0
+     */
     public function wc_products_token_cb() {
         $token = get_option( $this->plugin_name . '_token' );
-        echo '<input type="text" name="' . $this->plugin_name . '_token' . '" id="' . $this->plugin_name . '_token' . '" value="' . $token . '" size="30"> ';
+        echo '<input type="text" name="' . $this->plugin_name . '_token' . '" id="' . $this->plugin_name . '_token' . '" value="' . sanitize_text_field($token) . '" size="30"> ';
     }
+    
+    /**
+     * Validate the Diffbot API token.
+     * 
+     * Check the user supplied API token to make sure it only uses 
+     * numbers, lowercase letters and is exactly 32 characters in length.
+     * These conditions are assumptions made by me about how the DiffBot
+     * API tokens are generated.  Before deploying to a production 
+     * environment, token format should be discussed with DiffBot support.
+     * 
+     * @since   1.0.0
+     * @param   string  $input  API Token
+     * 
+     * @return Call to apply_filters function to apply any other possible filters.
+     */
+    public function wc_products_validate_input_token_cb($input){
         
+        if( preg_match("/^[a-z0-9]+/", $input) == 1 && strlen($input) == 32 ) {
+            $return = $input;
+        } else {
+            
+            $return = get_option( $this->plugin_name . '_token', '' );
+            
+            add_settings_error(
+                'invalid_wc_products_token',
+                '',
+                'DiffBot API Token may only contain numbers, lowercase letters, and must be 32 characters in length.',
+                'error'
+            );
+            
+        }
         
+        return apply_filters( 'wc_products_validate_input_token_cb', $return, $input );
+    }
+    
+    /**
+     * Updates or delete product meta 
+     * 
+     * Utility method to update a product meta_value or remove the record
+     * to keep clutter out the table. 
+     * 
+     * @since   1.0.0
+     * @param   string  $product_id     Product post_id value
+     * @param   string  $meta_name      Post meta meta_key
+     * @param   string  $meta_value     Post meta meta_value
+     * 
+     */
+    private function wc_products_update_meta_data($product_id, $meta_name, $meta_value){
+        
+         if( empty($meta_value) ) {
+            delete_post_meta( $product_id, $meta_name );
+        } else {
+            update_post_meta( $product_id, $meta_name, $meta_value );
+        }
+        
+    }
 }
